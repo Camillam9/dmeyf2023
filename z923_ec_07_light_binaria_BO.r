@@ -36,7 +36,7 @@ mis_semillas <- c(594697, 594709, 594721, 594739, 594749)
 
 PARAM <- list()
 
-PARAM$experimento <- paste0("EC8232_es200_lr11", ".",LR)
+PARAM$experimento <- paste0("EC8232_es200_lr07", ".",LR)
 
 PARAM$input$dataset <- "./dataset_exp.csv.gz"
 

@@ -23,7 +23,7 @@ PARAM <- list()
 
 PARAM$experimento <- paste0("dataset_comp03", ".")
 
-PARAM$input$dataset <- "./datasets_exp.csv.gz"
+PARAM$input$dataset <- "./dataset_exp.csv.gz"
 
 # Aqui se debe poner la carpeta de la computadora local
 setwd("~/buckets/b1/") # Establezco el Working Directory

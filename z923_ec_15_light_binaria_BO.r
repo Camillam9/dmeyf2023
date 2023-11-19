@@ -38,7 +38,7 @@ PARAM <- list()
 
 PARAM$experimento <- paste0("EC8232_es200_lr15", ".",LR)
 
-PARAM$input$dataset <- "./datasets_exp.csv.gz"
+PARAM$input$dataset <- "./dataset_exp.csv.gz"
 
 # los meses en los que vamos a entrenar
 #  mucha magia emerger de esta eleccion

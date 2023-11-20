@@ -27,9 +27,9 @@ mis_semillas <- c(594697, 594709, 594721, 594739, 594749,
                   161729, 221729, 202789, 700241, 991107)
 
 PARAM <- list()
-PARAM$experimento <-  "EC9010_es200_lr07"
+PARAM$experimento <- "EC9010_es200_lr07"
 
-PARAM$input$dataset <- "./datasets_exp.csv.gz"
+PARAM$input$dataset <- "./dataset_exp.csv.gz"
 
 # meses donde se entrena el modelo
 #PARAM$input$training <- c(202012, 202101, 202102, 202103, 202104, 202105)
@@ -39,7 +39,7 @@ PARAM$input$future <- c(202107) # meses donde se aplica el modelo
 #PARAM$finalmodel$semilla <- mis_semillas[1]
 
 # hiperparametros optimizados BO
-bo <- fread("~/buckets/b1/exp/EC8232_es200_lr07.0.7/BO_log.txt")
+bo <- fread("~/buckets/b1/exp/EC8232_es200_12.0.7/BO_log.txt")
 setorder(bo, -ganancia)
 #bo[1,] 
 
@@ -67,17 +67,17 @@ PARAM$finalmodel$lgb_basicos <- list(
   lambda_l1 = 0.0, # lambda_l1 >= 0.0
   lambda_l2 = 0.0, # lambda_l2 >= 0.0
   max_bin = 31L, # lo debo dejar fijo, no participa de la BO
-
+  
   bagging_fraction = 1.0, # 0.0 < bagging_fraction <= 1.0
   pos_bagging_fraction = 1.0, # 0.0 < pos_bagging_fraction <= 1.0
   neg_bagging_fraction = 1.0, # 0.0 < neg_bagging_fraction <= 1.0
   is_unbalance = FALSE, #
   scale_pos_weight = 1.0, # scale_pos_weight > 0.0
-
+  
   drop_rate = 0.1, # 0.0 < neg_bagging_fraction <= 1.0
   max_drop = 50, # <=0 means no limit
   skip_drop = 0.5, # 0.0 <= skip_drop <= 1.0
-
+  
   extra_trees = FALSE# Magic Sauce
   #saque el seed
 )
@@ -149,43 +149,43 @@ for (i in seq_along(mis_semillas)){
   #parametros
   seed <- list(seed = mis_semillas[i])
   param_completo <- c(PARAM$finalmodel$lgb_basicos, PARAM$finalmodel$optim, seed)
-
+  
   #modelo
   modelo <- lgb.train(
     data = dtrain,
     param = param_completo,
   )
-
+  
   #--------------------------------------
   if(FALSE){
     # ahora imprimo la importancia de variables
     tb_importancia <- as.data.table(lgb.importance(modelo))
     archivo_importancia <- "impo.txt"
-
+    
     fwrite(tb_importancia,
-      file = archivo_importancia,
-      sep = "\t"
+           file = archivo_importancia,
+           sep = "\t"
     )
   }
   #--------------------------------------
-
-
+  
+  
   # aplico el modelo a los datos sin clase
   dapply <- dataset[foto_mes == PARAM$input$future]
-
+  
   # aplico el modelo a los datos nuevos
   prediccion <- predict(
     modelo,
     data.matrix(dapply[, campos_buenos, with = FALSE])
   )
-
+  
   # genero la tabla de entrega
   tb_entrega <- dapply[, list(numero_de_cliente, foto_mes)]
   tb_entrega[, prob := prediccion]
-
+  
   #add prob by seed
   setDT(pred_res)[tb_entrega, paste0("seed", mis_semillas[i]) := i.prob, on = .(numero_de_cliente, foto_mes)]
-
+  
   cat(paste0("\nFinished:\t", i))
 }
 
@@ -195,8 +195,8 @@ pred_res = cbind(pred_res, pred_res[, .(ensamble = rowSums(.SD)), .SDcols = name
 
 #Export results
 fwrite(pred_res,
-  file = paste0("ensamble_new.csv"),
-  sep = ","
+       file = paste0("ensamble.csv"),
+       sep = ","
 )
 
 cat("\n\nScript finished\n")

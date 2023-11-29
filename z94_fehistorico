@@ -187,6 +187,13 @@ dataset[foto_mes == 202006, thomebanking := NA]
 #   aqui deben calcularse los  lags y  lag_delta
 #   Sin lags no hay paraiso ! corta la bocha
 #   https://rdrr.io/cran/data.table/man/shift.html
+
+# lags de orden 1
+dataset[, paste0(cols_lagueables, "_lag1") := shift(.SD, 1, NA, "lag"),
+  by = numero_de_cliente,
+  .SDcols = cols_lagueables
+]
+
 # lags de orden 3
 dataset[, paste0(cols_lagueables, "_lag3") := shift(.SD, 3, NA, "lag"),
   by = numero_de_cliente,

@@ -187,6 +187,8 @@ dataset[foto_mes == 202006, thomebanking := NA]
 #   aqui deben calcularse los  lags y  lag_delta
 #   Sin lags no hay paraiso ! corta la bocha
 #   https://rdrr.io/cran/data.table/man/shift.html
+cols_lagueables <- copy(setdiff( colnames(dataset),
+  c("numero_de_cliente", "foto_mes", "clase_ternaria") ))
 
 # lags de orden 1
 dataset[, paste0(cols_lagueables, "_lag1") := shift(.SD, 1, NA, "lag"),
